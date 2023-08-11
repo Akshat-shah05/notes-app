@@ -16,3 +16,9 @@ Adding:
 - Sort Notes
 - Firebase Connection
 - Style Changes
+
+Update!
+- Connection to Firebase (firestore)
+- Sorting added
+- Learned about debouncing (did it with useEffect and setTimeOut)
+- Maybe I'll add an authentication page
