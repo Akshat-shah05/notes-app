@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import Sidebar from "./components/Sidebar"
 import Editor from "./components/Editor"
 import Split from "react-split"
@@ -7,8 +7,9 @@ import { onSnapshot, addDoc, doc, deleteDoc, setDoc } from "firebase/firestore"
 import { notesCollection, db } from "./firebase"
 
 export default function App() {
-    const [notes, setNotes] = React.useState([])
-    const [currentNoteId, setCurrentNoteId] = React.useState("")
+    const [notes, setNotes] = useState([])
+    const [currentNoteId, setCurrentNoteId] = useState("")
+    const [tempNoteText, setTempNoteText] = useState("")
     
     const currentNote = 
         notes.find(note => note.id === currentNoteId) 
@@ -16,7 +17,7 @@ export default function App() {
 
     const sortedNotes = notes.sort((a, b) => b.updatedAt - a.updatedAt)
 
-    React.useEffect(() => {
+    useEffect(() => {
         const unsubscribe = onSnapshot(notesCollection, function(snapshot) {
             // Sync up our local notes array with the snapshot data
             
@@ -29,11 +30,17 @@ export default function App() {
         return unsubscribe
     }, [])
 
-    React.useEffect(() => {
+    useEffect(() => {
         if(!currentNoteId){
             setCurrentNoteId(notes[0]?.id)
         }
     }, [notes])
+
+    useEffect(() => {
+        if (currentNote) {
+            setTempNoteText(currentNote.body)
+        }
+    }, [currentNote])
 
     async function createNewNote() {
         const newNote = {
@@ -73,8 +80,8 @@ export default function App() {
                             deleteNote={deleteNote}
                         />
                         <Editor
-                            currentNote={currentNote}
-                            updateNote={updateNote}
+                            tempNoteText={tempNoteText}
+                            setTempNoteText={setTempNoteText}
                         />
                     </Split>
                     :
